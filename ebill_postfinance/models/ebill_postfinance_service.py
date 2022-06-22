@@ -40,14 +40,18 @@ class EbillPostfinanceService(models.Model):
     active = fields.Boolean(default=True)
     file_type_to_use = fields.Selection(
         string="Invoice Format",
-        default="EAI.XML",
+        default="XML",
         required=True,
         selection=[
-            ("XML", "ybinvoice"),
+            ("XML", "XML Yellow Bill"),
             ("EAI.XML", "Custom XML (SAPiDoc)"),
             # ("eai.edi", "Custom EDIFACT"),
             ("struct.pdf", "Factur X"),
         ],
+    )
+    use_file_type_xml_paynet = fields.Boolean(
+        string="Use Paynet/SIX format",
+        help="Enable use of legacy SIX/Paynet invoice format.",
     )
     operation_timeout = fields.Integer(
         string="HTTP Timeout",

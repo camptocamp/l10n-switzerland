@@ -7,8 +7,10 @@ from datetime import datetime
 
 import pytz
 from jinja2 import Environment, FileSystemLoader
+from lxml import etree
 
 from odoo import _, fields, models
+from odoo.exceptions import UserError
 from odoo.modules.module import get_module_root
 
 from odoo.addons.base.models.res_bank import sanitize_account_number
@@ -17,7 +19,9 @@ _logger = logging.getLogger(__name__)
 
 MODULE_PATH = get_module_root(os.path.dirname(__file__))
 INVOICE_TEMPLATE_2003 = "invoice-2003A.jinja"
+INVOICE_TEMPLATE_YB = "invoice-yellowbill.jinja"
 TEMPLATE_DIR = [MODULE_PATH + "/messages"]
+XML_SCHEMA_YB = MODULE_PATH + "/messages/ybInvoice_V2.0.4.xsd"
 
 DOCUMENT_TYPE = {"out_invoice": "EFD", "out_refund": "EGS"}
 
@@ -159,6 +163,13 @@ class EbillPostfinanceInvoiceMessage(models.Model):
             date_string = datetime.now()
         return date_string.strftime("%Y%m%d")
 
+    @staticmethod
+    def format_date_yb(date_string=None):
+        """Format a date in the Jinja template."""
+        if not date_string:
+            date_string = datetime.now()
+        return date_string.strftime("%Y-%m-%d")
+
     def _get_payload_params(self):
         bank_account = ""
         if self.payment_type == "qr":
@@ -224,6 +235,79 @@ class EbillPostfinanceInvoiceMessage(models.Model):
         params["date_due"] = date_due
         return params
 
+    def _get_payload_params_yb(self):
+        bank_account = ""
+        if self.payment_type == "qr":
+            bank_account = sanitize_account_number(
+                self.invoice_id.partner_bank_id.l10n_ch_qr_iban
+                or self.invoice_id.partner_bank_id.acc_number
+            )
+        else:
+            bank_account = self.invoice_id.partner_bank_id.l10n_ch_isr_subscription_chf
+            if bank_account:
+                account_parts = bank_account.split("-")
+                bank_account = (
+                    account_parts[0] + account_parts[1].rjust(6, "0") + account_parts[2]
+                )
+            else:
+                bank_account = ""
+
+        delivery = (
+            self.invoice_id.partner_shipping_id
+            if self.invoice_id.partner_shipping_id != self.invoice_id.partner_id
+            else False
+        )
+        orders = self.invoice_id.line_ids.sale_line_ids.mapped("order_id")
+        params = {
+            "invoice": self.invoice_id,
+            "saleorder": orders,
+            "message": self,
+            "client_pid": self.service_id.biller_id,
+            "invoice_lines": self.invoice_id.postfinance_invoice_line_ids(),
+            "biller": self.invoice_id.company_id,
+            "customer": self.invoice_id.partner_id,
+            "delivery": delivery,
+            "pdf_data": self.attachment_id.datas.decode("ascii"),
+            "bank": self.invoice_id.partner_bank_id,
+            "bank_account": bank_account,
+            "transaction_id": self.transaction_id,
+            "payment_type": self.payment_type,
+            "document_type": DOCUMENT_TYPE[self.invoice_id.move_type],
+            "format_date": self.format_date_yb,
+            "ebill_account_number": self.ebill_account_number,
+            "discount_template": "",
+            "discount": {},
+        }
+        amount_by_group = []
+        # Get the percentage of the tax from the name of the group
+        # Could be improve by searching in the account_tax linked to the group
+        for taxgroup in self.invoice_id.amount_by_group:
+            rate = taxgroup[0].split()[-1:][0][:-1]
+            amount_by_group.append(
+                (
+                    rate or "0",
+                    taxgroup[1],
+                    taxgroup[2],
+                )
+            )
+        params["amount_by_group"] = amount_by_group
+        # Get the invoice due date
+        date_due = None
+        if self.invoice_id.invoice_payment_term_id:
+            terms = self.invoice_id.invoice_payment_term_id.compute(
+                self.invoice_id.amount_total
+            )
+            if terms:
+                # Returns all payment and their date like [('2020-12-07', 430.37), ...]
+                # Get the last payment date in the format "202021207"
+                date_due = terms[-1][0].replace("-", "")
+        if not date_due:
+            date_due = self.format_date_yb(
+                self.invoice_id.invoice_date_due or self.invoice_id.invoice_date
+            )
+        params["date_due"] = date_due
+        return params
+
     def _get_jinja_env(self, template_dir):
         jinja_env = Environment(
             loader=FileSystemLoader(template_dir),
@@ -236,13 +320,49 @@ class EbillPostfinanceInvoiceMessage(models.Model):
     def _get_template(self, jinja_env):
         return jinja_env.get_template(INVOICE_TEMPLATE_2003)
 
+    def _get_template_yb(self, jinja_env):
+        return jinja_env.get_template(INVOICE_TEMPLATE_YB)
+
     def _generate_payload(self):
         self.ensure_one()
         assert self.state in ("draft", "error")
+        if self.service_id.file_type_to_use == "XML":
+            if self.service_id.use_file_type_xml_paynet:
+                return self._generate_payload_paynet()
+            else:
+                return self._generate_payload_yb()
+        return
+
+    def _generate_payload_paynet(self):
+        """Generates the xml in the paynet format."""
         params = self._get_payload_params()
         jinja_env = self._get_jinja_env(TEMPLATE_DIR)
         jinja_template = self._get_template(jinja_env)
         return jinja_template.render(params)
+
+    def _generate_payload_yb(self):
+        """Generates the xml in the yellowbill format."""
+        params = self._get_payload_params_yb()
+        jinja_env = self._get_jinja_env(TEMPLATE_DIR)
+        jinja_template = self._get_template_yb(jinja_env)
+        return jinja_template.render(params)
+
+    def validate_xml_payload(self):
+        """Check the validity of yellowbill xml."""
+        schema = etree.XMLSchema(file=XML_SCHEMA_YB)
+        parser = etree.XMLParser(schema=schema)
+        try:
+            etree.fromstring(self.payload.encode("utf-8"), parser)
+        except etree.XMLSyntaxError as ex:
+            raise UserError(ex.error_log)
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("The payload is valid."),
+                "sticky": False,
+            },
+        }
 
     def update_invoice_status(self):
         """Update the export status in the chatter."""
