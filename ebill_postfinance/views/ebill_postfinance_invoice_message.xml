@@ -7,6 +7,11 @@
             <form>
                 <header>
                   <button type="object" name="send_to_postfinance" string="Resend" />
+                  <button
+                        type="object"
+                        name="validate_xml_payload"
+                        string="Check payload validity"
+                    />
                   <field
                         name="state"
                         widget="statusbar"

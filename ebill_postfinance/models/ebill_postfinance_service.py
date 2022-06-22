@@ -40,14 +40,18 @@ class EbillPostfinanceService(models.Model):
     active = fields.Boolean(default=True)
     file_type_to_use = fields.Selection(
         string="Invoice Format",
-        default="EAI.XML",
+        default="XML",
         required=True,
         selection=[
-            ("XML", "ybinvoice"),
+            ("XML", "XML Yellow Bill"),
             ("EAI.XML", "Custom XML (SAPiDoc)"),
             # ("eai.edi", "Custom EDIFACT"),
             ("struct.pdf", "Factur X"),
         ],
+    )
+    use_file_type_xml_paynet = fields.Boolean(
+        string="Use Paynet/SIX format",
+        help="Enable use of legacy SIX/Paynet invoice format.",
     )
     operation_timeout = fields.Integer(
         string="HTTP Timeout",
@@ -99,6 +103,7 @@ class EbillPostfinanceService(models.Model):
             # TODO handle the case where there is more to download ?
             _logger.info("Search invoice has more to download")
         for message in res.InvoiceList.SearchInvoice:
+            _logger.info(f"Found record for message {message}")
             record = self.invoice_message_ids.search(
                 [("transaction_id", "=", message.TransactionId)]
             )

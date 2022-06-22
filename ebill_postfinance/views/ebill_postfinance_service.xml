@@ -74,7 +74,11 @@
                         <group>
                             <field name="use_test_service" />
                             <field name="operation_timeout" />
-                            <field name="file_type_to_use" />
+                            <field name="file_type_to_use" readonly="1" />
+                            <field
+                                name="use_file_type_xml_paynet"
+                                attrs="{'invisible':[('file_type_to_use', '!=', 'XML')]}"
+                            />
                             <field
                                 name="partner_bank_id"
                                 options="{'no_create': True}"
