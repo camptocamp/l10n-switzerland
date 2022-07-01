@@ -47,7 +47,7 @@ class IrActionsReport(models.Model):
 
         reports_list = []
         for invoice in res_ids:
-            inv_obj = self.env['account.move'].browse(invoice)
+            inv_obj = self.env["account.move"].browse(invoice)
             inv_report = self._get_report_from_name("account.report_invoice")
             invoice_pdf, _ = inv_report.render_qweb_pdf(invoice, data)
             reports_list.append(invoice_pdf)

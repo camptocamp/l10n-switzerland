@@ -32,12 +32,12 @@ class MailTemplate(models.Model):
                 # We add an optional attachment from mail template (if set)
                 if self.report_template:
                     report_name = self.report_template.name
-                    report_xml_id= self.report_template.xml_id
-                    report_pdf = self.env.ref(report_xml_id).render_qweb_pdf([res_id])[0]
+                    report_xml_id = self.report_template.xml_id
+                    report_pdf = self.env.ref(report_xml_id).render_qweb_pdf([res_id])[
+                        0
+                    ]
                     report_pdf = base64.b64encode(report_pdf)
-                    new_attachments.append(
-                        (report_name, report_pdf)
-                    )
+                    new_attachments.append((report_name, report_pdf))
 
                 attachments_list = (
                     multi_mode
