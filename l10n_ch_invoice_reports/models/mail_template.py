@@ -25,6 +25,7 @@ class MailTemplate(models.Model):
             related_model = self.env[self.model_id.model].browse(res_id)
 
             if related_model._name == "account.move":
+                related_model.attachment_ids = False
                 rslt[res_id]["attachments"] = False
                 template = res_ids_to_templates[res_id]
                 self._render_template(template.report_name, template.model, res_id)
