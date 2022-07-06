@@ -103,6 +103,7 @@ class EbillPostfinanceService(models.Model):
             # TODO handle the case where there is more to download ?
             _logger.info("Search invoice has more to download")
         for message in res.InvoiceList.SearchInvoice:
+            _logger.info(f"Found record for message {message}")
             record = self.invoice_message_ids.search(
                 [("transaction_id", "=", message.TransactionId)]
             )

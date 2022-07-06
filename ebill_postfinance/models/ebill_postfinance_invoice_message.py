@@ -298,9 +298,8 @@ class EbillPostfinanceInvoiceMessage(models.Model):
                 self.invoice_id.amount_total
             )
             if terms:
-                # Returns all payment and their date like [('2020-12-07', 430.37), ...]
-                # Get the last payment date in the format "202021207"
-                date_due = terms[-1][0].replace("-", "")
+                # Get the last payment date
+                date_due = terms[-1][0]
         if not date_due:
             date_due = self.format_date_yb(
                 self.invoice_id.invoice_date_due or self.invoice_id.invoice_date

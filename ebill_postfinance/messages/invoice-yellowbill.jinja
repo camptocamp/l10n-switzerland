@@ -161,7 +161,7 @@
                     {%- if loop.index == 1 %}
                     <Tax>
                         <TaxDetail>
-                            <Rate>{{ tax.amount|round(2) }}</Rate>
+                            <Rate>{{ tax.amount|round(2)|replace(",", ".") }}</Rate>
                             <Amount>{{ tax._compute_amount(line.price_subtotal, line.price_unit)|round(2) }}</Amount>
                             <BaseAmountExclusiveTax>{{ line.price_subtotal|round(6) }}</BaseAmountExclusiveTax>
                             <BaseAmountInclusiveTax>{{ line.price_total|round(6) }}</BaseAmountInclusiveTax>
@@ -208,7 +208,7 @@
                 <Tax>
                     {% for taxgroup in amount_by_group %}
                     <TaxDetail>
-                        <Rate>{{ taxgroup[0] or "0" }}</Rate>
+                        <Rate>{{ taxgroup[0]|replace(",", ".") or "0" }}</Rate>
                         <Amount>{{ taxgroup[1]|round(2)|round(6) }}</Amount>
                         <BaseAmountExclusiveTax>{{ taxgroup[2]|round(6) }}</BaseAmountExclusiveTax>
                         <BaseAmountInclusiveTax>{{ taxgroup[2]|round(6) + taxgroup[1]|round(6) }}</BaseAmountInclusiveTax>
