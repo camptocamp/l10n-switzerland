@@ -3,7 +3,7 @@
 
 import base64
 
-from odoo import models
+from odoo import _, models
 
 
 class MailTemplate(models.Model):
@@ -25,14 +25,22 @@ class MailTemplate(models.Model):
             related_model = self.env[self.model_id.model].browse(res_id)
 
             if related_model._name == "account.move":
-                related_model.attachment_ids = False
                 rslt[res_id]["attachments"] = False
                 template = res_ids_to_templates[res_id]
                 self._render_template(template.report_name, template.model, res_id)
                 new_attachments = []
                 # We add an optional attachment from mail template (if set)
                 if self.report_template:
-                    report_name = self.report_template.name
+                    report_name = self.report_template.attachment
+                    if (
+                        self.report_template.report_name
+                        == "l10n_ch_invoice_reports.account_move_payment_report"
+                    ):
+                        # force translation of attachment's name according to partner's lang
+                        self = self.with_context(lang=related_model.partner_id.lang)
+                        report_name = _(
+                            "invoice_%s_with_payslip.pdf"
+                        ) % related_model.name.replace("/", "_")
                     report_xml_id = self.report_template.xml_id
                     report_pdf = self.env.ref(report_xml_id).render_qweb_pdf([res_id])[
                         0
