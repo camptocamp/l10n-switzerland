@@ -8,8 +8,8 @@
         name="l10n_ch_invoice_reports.account_move_payment_report"
         file="l10n_ch_invoice_reports.account_move_payment_report"
         attachment_use="True"
-        attachment="invoice_'+(object.name)+'_with_payslip.pdf"
+        attachment="'invoice_'+object.name+'_with_payslip.pdf'"
         menu="True"
-        print_report_name="'Invoice-payment-slip-%s' % object.name"
+        print_report_name="('invoice-payment-slip_'+object.name)"
     />
 </odoo>
