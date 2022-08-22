@@ -22,7 +22,7 @@ class AccountMove(models.Model):
         for record in self:
             if self.env.context.get("_mail_template_no_attachments", False):
                 record.l10n_ch_isr_valid = False
-                return False
+                continue
             record.l10n_ch_isr_valid = (
                 record.type == "out_invoice"
                 and record.name
@@ -43,3 +43,11 @@ class AccountMove(models.Model):
             self.partner_id,
             self.invoice_payment_ref,
         )
+
+    def action_invoice_sent(self):
+        # override to update context with new key
+        action = super().action_invoice_sent()
+        ctx = action["context"].copy()
+        ctx.update({"_mail_template_no_attachments": True})
+        action["context"] = ctx
+        return action

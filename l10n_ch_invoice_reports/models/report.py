@@ -42,27 +42,29 @@ class IrActionsReport(models.Model):
             "l10n_ch_invoice_reports.account_move_payment_report",
         ]
 
+        inv_report = self._get_report_from_name("account.report_invoice")
+        qr_report = self._get_report_from_name("l10n_ch.qr_report_main")
+        isr_report = self._get_report_from_name("l10n_ch.isr_report_main")
+
         if self.report_name not in reports or not res_ids:
             return super().render_qweb_pdf(res_ids, data)
 
-        reports_list = []
-        for invoice in res_ids:
-            inv_obj = self.env["account.move"].browse(invoice)
-            inv_report = self._get_report_from_name("account.report_invoice")
-            invoice_pdf, _ = inv_report.render_qweb_pdf(invoice, data)
-            reports_list.append(invoice_pdf)
+        io_list = []
+        self.env["account.move"].browse(res_ids)
+        for inv_id in res_ids:
+            inv_obj = self.env["account.move"].search([("id", "=", inv_id)])
+            invoice_pdf, _ = inv_report.render_qweb_pdf(inv_id, data)
+            io_list.append(io.BytesIO(invoice_pdf))
 
             if inv_obj.company_id.print_qr_invoice:
-                qr_report = self._get_report_from_name("l10n_ch.qr_report_main")
-                qr_pdf, _ = qr_report.render_qweb_pdf(invoice, data)
-                reports_list.append(qr_pdf)
+                qr_pdf, _ = qr_report.render_qweb_pdf(inv_id, data)
+                io_list.append(io.BytesIO(qr_pdf))
 
             if inv_obj.company_id.print_isr_invoice:
-                isr_report = self._get_report_from_name("l10n_ch.isr_report_main")
-                isr_pdf, _ = isr_report.render_qweb_pdf(invoice, data)
-                reports_list.append(isr_pdf)
+                isr_pdf, _ = isr_report.render_qweb_pdf(inv_id, data)
+                io_list.append(io.BytesIO(isr_pdf))
 
-        io_list = [io.BytesIO(pdf_file) for pdf_file in reports_list]
         pdf = self.merge_pdf_in_memory(io_list)
-        [io_file.close() for io_file in io_list]
+        for io_file in io_list:
+            io_file.close()
         return (pdf, "pdf")
