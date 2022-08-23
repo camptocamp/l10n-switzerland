@@ -42,29 +42,27 @@ class IrActionsReport(models.Model):
             "l10n_ch_invoice_reports.account_move_payment_report",
         ]
 
+        if self.report_name not in reports or not res_ids:
+            return super().render_qweb_pdf(res_ids, data)
+
         inv_report = self._get_report_from_name("account.report_invoice")
         qr_report = self._get_report_from_name("l10n_ch.qr_report_main")
         isr_report = self._get_report_from_name("l10n_ch.isr_report_main")
 
-        if self.report_name not in reports or not res_ids:
-            return super().render_qweb_pdf(res_ids, data)
-
         io_list = []
-        self.env["account.move"].browse(res_ids)
-        for inv_id in res_ids:
-            inv_obj = self.env["account.move"].search([("id", "=", inv_id)])
-            invoice_pdf, _ = inv_report.render_qweb_pdf(inv_id, data)
+        for inv_id in self.env["account.move"].browse(res_ids):
+            invoice_pdf, _ = inv_report.render_qweb_pdf(inv_id.id, data)
             io_list.append(io.BytesIO(invoice_pdf))
 
-            if inv_obj.company_id.print_qr_invoice:
-                qr_pdf, _ = qr_report.render_qweb_pdf(inv_id, data)
+            if inv_id.company_id.print_qr_invoice:
+                qr_pdf, _ = qr_report.render_qweb_pdf(inv_id.id, data)
                 io_list.append(io.BytesIO(qr_pdf))
 
-            if inv_obj.company_id.print_isr_invoice:
-                isr_pdf, _ = isr_report.render_qweb_pdf(inv_id, data)
+            if inv_id.company_id.print_isr_invoice:
+                isr_pdf, _ = isr_report.render_qweb_pdf(inv_id.id, data)
                 io_list.append(io.BytesIO(isr_pdf))
 
-        pdf = self.merge_pdf_in_memory(io_list)
-        for io_file in io_list:
-            io_file.close()
-        return (pdf, "pdf")
+            pdf = self.merge_pdf_in_memory(io_list)
+            for io_file in io_list:
+                io_file.close()
+            return (pdf, "pdf")

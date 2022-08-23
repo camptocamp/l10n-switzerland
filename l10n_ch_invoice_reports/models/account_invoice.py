@@ -9,32 +9,18 @@ class AccountMove(models.Model):
     _inherit = "account.move"
 
     # override to add context key dependency and handle it properly inside method
-    @api.depends(
-        "type",
-        "name",
-        "currency_id.name",
-        "invoice_partner_bank_id.l10n_ch_isr_subscription_eur",
-        "invoice_partner_bank_id.l10n_ch_isr_subscription_chf",
-    )
-    @api.depends_context("_mail_template_no_attachments")
+    @api.depends_context("invoice_report_no_attachment")
     def _compute_l10n_ch_isr_valid(self):
-        """Returns True if all the data required to generate the ISR are present"""
-        for record in self:
-            if self.env.context.get("_mail_template_no_attachments", False):
-                record.l10n_ch_isr_valid = False
-                continue
-            record.l10n_ch_isr_valid = (
-                record.type == "out_invoice"
-                and record.name
-                and record.l10n_ch_isr_subscription
-                and record.l10n_ch_currency_name in ["EUR", "CHF"]
-            )
+        if self.env.context.get("invoice_report_no_attachment", False):
+            self.update({"l10n_ch_isr_valid": False})
+        else:
+            super()._compute_l10n_ch_isr_valid()
 
     def can_generate_qr_bill(self):
-        """ Returns True iff the invoice can be used to generate a QR-bill.
+        """ Returns True if the invoice can be used to generate a QR-bill.
         """
         self.ensure_one()
-        if self.env.context.get("_mail_template_no_attachments", False):
+        if self.env.context.get("invoice_report_no_attachment", False):
             return False
         return not self.env.ref(
             "l10n_ch.l10n_ch_swissqr_template"
@@ -47,7 +33,16 @@ class AccountMove(models.Model):
     def action_invoice_sent(self):
         # override to update context with new key
         action = super().action_invoice_sent()
-        ctx = action["context"].copy()
-        ctx.update({"_mail_template_no_attachments": True})
-        action["context"] = ctx
+        action["context"] = dict(
+            action.get("context", {}), invoice_report_no_attachment=True
+        )
         return action
+
+
+class AccountInvoiceSend(models.TransientModel):
+    _inherit = "account.invoice.send"
+
+    def send_and_print_action(self):
+        # override to update context with new key
+        self = self.with_context(invoice_report_no_attachment=True)
+        return super().send_and_print_action()
