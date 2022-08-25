@@ -50,16 +50,16 @@ class IrActionsReport(models.Model):
         isr_report = self._get_report_from_name("l10n_ch.isr_report_main")
 
         io_list = []
-        for inv_id in self.env["account.move"].browse(res_ids):
-            invoice_pdf, _ = inv_report.render_qweb_pdf(inv_id.id, data)
+        for inv in self.env["account.move"].browse(res_ids):
+            invoice_pdf, _ = inv_report.render_qweb_pdf(inv.id, data)
             io_list.append(io.BytesIO(invoice_pdf))
 
-            if inv_id.company_id.print_qr_invoice:
-                qr_pdf, _ = qr_report.render_qweb_pdf(inv_id.id, data)
+            if inv.company_id.print_qr_invoice:
+                qr_pdf, _ = qr_report.render_qweb_pdf(inv.id, data)
                 io_list.append(io.BytesIO(qr_pdf))
 
-            if inv_id.company_id.print_isr_invoice:
-                isr_pdf, _ = isr_report.render_qweb_pdf(inv_id.id, data)
+            if inv.company_id.print_isr_invoice:
+                isr_pdf, _ = isr_report.render_qweb_pdf(inv.id, data)
                 io_list.append(io.BytesIO(isr_pdf))
 
             pdf = self.merge_pdf_in_memory(io_list)

@@ -44,5 +44,6 @@ class AccountInvoiceSend(models.TransientModel):
 
     def send_and_print_action(self):
         # override to update context with new key
-        self = self.with_context(invoice_report_no_attachment=True)
-        return super().send_and_print_action()
+        return super(
+            AccountInvoiceSend, self.with_context(invoice_report_no_attachment=True)
+        ).send_and_print_action()
