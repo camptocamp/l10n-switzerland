@@ -81,6 +81,14 @@ class AccountInvoice(models.Model):
         self.ensure_one()
         return ''
 
+    @api.onchange('reference', 'partner_bank_id')
+    def onchange_reference_name(self):
+        # onchange_reference method defined in l10n_ch_base_bank
+        # to not bring dependency on this addon we defined method which will
+        if self.has_qrr() and self.partner_bank_id._is_qr_iban():
+            self.reference_type = 'QRR'
+            return
+
     @api.depends('number', 'name')
     def _compute_l10n_ch_qrr(self):
         r""" Compute a QRR reference
