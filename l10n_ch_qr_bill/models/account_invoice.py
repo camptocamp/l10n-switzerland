@@ -2,7 +2,6 @@
 # Copyright 2019-2020 Odoo
 # Copyright 2019-2020 Camptocamp SA
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
-
 import re
 
 import werkzeug.urls
@@ -55,7 +54,9 @@ class AccountInvoice(models.Model):
             "to generate QR-bill report."
         ),
     )
-    # This field is used in the "invisible" condition field of the 'Print QRR' button.
+    """ This field is used in the "invisible" condition field
+        of the 'Print QRR' button.
+    """
     l10n_ch_currency_name = fields.Char(
         related='currency_id.name',
         readonly=True,
@@ -157,9 +158,9 @@ class AccountInvoice(models.Model):
                 else free_communication
             )
 
-        # Compute reference type (empty by default, only mandatory for QR-IBAN,
-        # and must then be 27 characters-long, with mod10r check digit as the 27th one,
-        # just like ISR number for invoices)
+        # Compute reference type (empty by default, only mandatory for
+        # QR-IBAN, and must then be 27 characters-long, with mod10r check
+        # digit as the 27th one, just like ISR number for invoices)
         reference_type = 'NON'
         reference = ''
         if is_qrr:
@@ -238,17 +239,18 @@ class AccountInvoice(models.Model):
 
         qr_code_vals = self._prepare_swiss_code_url_vals()
 
-        # use quiet to remove blank around the QR and make it easier to place it
-        return '/report/qrcode/?value=%s&width=%s&height=%s&bar_border=0' % (
+        # use quiet to remove blank around the QR
+        # and make it easier to place it
+        return '/report/qrcode/?value=%s&width=%s&height=%s&bar_border=0&barlevel=M' % (
             werkzeug.urls.url_quote_plus('\n'.join(qr_code_vals)),
             256,
             256,
         )
 
     def _get_partner_address_lines(self, partner):
-        """ Returns a tuple of two elements containing the address lines to use
-        for this partner. Line 1 contains the street and number, line 2 contains
-        zip and city. Those two lines are limited to 70 characters
+        """ Returns a tuple of two elements containing the address lines to
+        use for this partner. Line 1 contains the street and number, line 2
+        contains zip and city. Those two lines are limited to 70 characters
         """
         streets = [partner.street, partner.street2]
         line_1 = ' '.join(filter(None, streets))
@@ -258,7 +260,8 @@ class AccountInvoice(models.Model):
     @api.model
     def _is_qrr(self, reference):
         """ Checks whether the given reference is a QR-reference, i.e. it is
-        made of 27 digits, the 27th being a mod10r check on the 26 previous ones.
+        made of 27 digits, the 27th being a mod10r check on the 26 previous
+        ones.
         """
         if not reference:
             return False
@@ -269,9 +272,12 @@ class AccountInvoice(models.Model):
             and reference == mod10r(reference[:-1])
         )
 
+    def _get_reference_to_check(self):
+        return self.reference
+
     def validate_swiss_code_arguments(self):
         # TODO do checks separately
-        reference_to_check = self.name
+        reference_to_check = self._get_reference_to_check()
 
         def _partner_fields_set(partner):
             return (
