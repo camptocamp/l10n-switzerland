@@ -1,0 +1,1 @@
+git+https://github.com/OCA/edi@refs/pull/496/head#subdirectory=setup/account_invoice_import
