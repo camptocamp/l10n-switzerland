@@ -9,3 +9,4 @@ odoo14-addon-ebill_postfinance @ git+https://github.com/OCA/l10n-switzerland@ref
 # But I think it needs to be on PyPi before merging
 https://github.com/camptocamp/ebilling-postfinance/archive/master.tar.gz#egg=ebilling_postfinance
 odoo14-addon-account_financial_discount @ git+https://github.com/OCA/account-payment@refs/pull/464/head#subdirectory=setup/account_financial_discount
+odoo14-addon-l10n_eu_product_adr_dangerous_goods @ git+https://github.com/OCA/community-data-files@refs/pull/118/head#subdirectory=setup/l10n_eu_product_adr_dangerous_goods
