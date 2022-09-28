@@ -9,4 +9,6 @@ xmlunittest==0.5.0
 https://github.com/camptocamp/ebilling-postfinance/archive/master.tar.gz#egg=ebilling_postfinance
 odoo14-addon-account_financial_discount @ git+https://github.com/OCA/account-payment@refs/pull/464/head#subdirectory=setup/account_financial_discount
 odoo14-addon-ebill_postfinance @ git+https://github.com/OCA/l10n-switzerland@refs/pull/675/head#subdirectory=setup/ebill_postfinance
+# Needed for ebill_postfinance
+# But I think it needs to be on PyPi before merging
 https://github.com/camptocamp/ebilling-postfinance/archive/master.tar.gz#egg=ebilling_postfinance
