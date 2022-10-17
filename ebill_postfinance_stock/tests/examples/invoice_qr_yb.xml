@@ -118,6 +118,11 @@
                         <ReferenceType>OrderNumberByBuyer</ReferenceType>
                         <ReferenceValue>CustomerRef</ReferenceValue>
                     </FixedReference>
+                    <FixedReference>
+                        <ReferencePosition>4</ReferencePosition>
+                        <ReferenceType>DeliveryNoteNumber</ReferenceType>
+                        <ReferenceValue>Picking Name</ReferenceValue>
+                    </FixedReference>
                 </LineItem>
                 <LineItem>
                     <LineItemType>NORMAL</LineItemType>
@@ -139,14 +144,19 @@
                     <AmountInclusiveTax>0.0</AmountInclusiveTax>
                     <AmountExclusiveTax>0.0</AmountExclusiveTax>
                     <FixedReference>
-                        <ReferencePosition>4</ReferencePosition>
+                        <ReferencePosition>5</ReferencePosition>
                         <ReferenceType>OrderNumberBySupplier</ReferenceType>
                         <ReferenceValue>Order123</ReferenceValue>
                     </FixedReference>
                     <FixedReference>
-                        <ReferencePosition>5</ReferencePosition>
+                        <ReferencePosition>6</ReferencePosition>
                         <ReferenceType>OrderNumberByBuyer</ReferenceType>
                         <ReferenceValue>CustomerRef</ReferenceValue>
+                    </FixedReference>
+                    <FixedReference>
+                        <ReferencePosition>7</ReferencePosition>
+                        <ReferenceType>DeliveryNoteNumber</ReferenceType>
+                        <ReferenceValue>Picking Name</ReferenceValue>
                     </FixedReference>
                 </LineItem>
                 <LineItem>
@@ -159,12 +169,12 @@
                     <AmountInclusiveTax>0.0</AmountInclusiveTax>
                     <AmountExclusiveTax>0.0</AmountExclusiveTax>
                     <FixedReference>
-                        <ReferencePosition>6</ReferencePosition>
+                        <ReferencePosition>8</ReferencePosition>
                         <ReferenceType>OrderNumberBySupplier</ReferenceType>
                         <ReferenceValue>Order123</ReferenceValue>
                     </FixedReference>
                     <FixedReference>
-                        <ReferencePosition>7</ReferencePosition>
+                        <ReferencePosition>9</ReferencePosition>
                         <ReferenceType>OrderNumberByBuyer</ReferenceType>
                         <ReferenceValue>CustomerRef</ReferenceValue>
                     </FixedReference>
