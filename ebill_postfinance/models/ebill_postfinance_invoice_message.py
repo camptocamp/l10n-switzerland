@@ -9,7 +9,7 @@ import pytz
 from jinja2 import Environment, FileSystemLoader
 from lxml import etree
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.modules.module import get_module_root
 
@@ -74,6 +74,9 @@ class EbillPostfinanceInvoiceMessage(models.Model):
     ref = fields.Char("Reference No.", size=35)
     ebill_account_number = fields.Char("Paynet Id", size=20)
     payload = fields.Text("Payload sent")
+    payload_size = fields.Float(
+        "Payload Size (MB)", digits=(6, 3), compute="_compute_payload_size"
+    )
     response = fields.Text("Response")
     # shipment_id = fields.Char(size=24, help="Shipment Id on Paynet service")
     payment_type = fields.Selection(
@@ -81,6 +84,14 @@ class EbillPostfinanceInvoiceMessage(models.Model):
         default="qr",
         readonly=True,
     )
+
+    @api.depends("payload")
+    def _compute_payload_size(self):
+        for message in self:
+            size_in_bytes = len(message.payload)
+            if size_in_bytes > 0:
+                size_in_bytes = size_in_bytes / 1000000
+            message.payload_size = size_in_bytes
 
     def set_transaction_id(self):
         for record in self:
