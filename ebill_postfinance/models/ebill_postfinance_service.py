@@ -4,7 +4,6 @@
 import logging
 import logging.config
 
-# from ..ebilling_postfinance.ebilling_postfinance import ebilling_postfinance
 from ebilling_postfinance import ebilling_postfinance
 
 from odoo import api, fields, models
