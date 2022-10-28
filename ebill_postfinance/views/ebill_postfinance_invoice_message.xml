@@ -37,6 +37,7 @@
                     </group>
                     <group>
                     <field name="response" />
+                    <field name="payload_size" />
                     <field name="payload" />
                     <field name="attachment_id" />
                     </group>

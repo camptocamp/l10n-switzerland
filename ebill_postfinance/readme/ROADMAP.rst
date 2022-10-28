@@ -3,7 +3,6 @@ ToDo
 
 * Add option to import the contract subscription (csv)
 * Add the download of this csv from web service, but what is the endpoint ?
-* Implement the yellow bill xml format
 
 
 Nice to have
