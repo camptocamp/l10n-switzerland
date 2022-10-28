@@ -173,7 +173,7 @@
                     <AmountInclusiveTax>{{ line.price_total|round(6) }}</AmountInclusiveTax>
                     <AmountExclusiveTax>{{ line.price_subtotal|round(6) }}</AmountExclusiveTax>
 
-                    {% for order in invoice_lines.sale_line_ids.mapped('order_id') %}
+                    {% for order in line.sale_line_ids.mapped('order_id') %}
                     {% set ref.position = ref.position + 1 %}
                     <FixedReference>
                       <ReferencePosition>{{ ref.position }}</ReferencePosition>
