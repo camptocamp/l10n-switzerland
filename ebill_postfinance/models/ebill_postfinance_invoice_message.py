@@ -95,11 +95,10 @@ class EbillPostfinanceInvoiceMessage(models.Model):
 
     def set_transaction_id(self):
         for record in self:
-            record.transaction_id = "_".join(
+            record.transaction_id = "-".join(
                 [
-                    record.invoice_id.name.replace("/", "_"),
-                    fields.Datetime.now().strftime("%Y_%m_%d_%H_%_M"),
-                    (record.file_type_used or "").lower().replace(".", ""),
+                    fields.Datetime.now().strftime("%Y%m%d%H%M"),
+                    record.invoice_id.name.replace("/", "").replace("_", ""),
                 ]
             )
 
