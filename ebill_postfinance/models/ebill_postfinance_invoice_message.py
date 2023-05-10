@@ -94,13 +94,13 @@ class EbillPostfinanceInvoiceMessage(models.Model):
             message.payload_size = size_in_bytes
 
     def set_transaction_id(self):
-        for record in self:
-            record.transaction_id = "-".join(
-                [
-                    fields.Datetime.now().strftime("%Y%m%d%H%M"),
-                    record.invoice_id.name.replace("/", "").replace("_", ""),
-                ]
-            )
+        self.ensure_one()
+        self.transaction_id = "-".join(
+            [
+                fields.Datetime.now().strftime("%y%m%d%H%M%S"),
+                self.invoice_id.name.replace("/", "").replace("_", ""),
+            ]
+        )
 
     def update_message_from_server_data(self, data):
         """Update the invoice message with data received from the server.

@@ -104,7 +104,9 @@ class EbillPostfinanceService(models.Model):
         for message in res.InvoiceList.SearchInvoice:
             _logger.info(f"Found record for message {message}")
             record = self.invoice_message_ids.search(
-                [("transaction_id", "=", message.TransactionId)]
+                [("transaction_id", "=", message.TransactionId)],
+                limit=1,
+                order="create_date desc",
             )
             if record:
                 record.update_message_from_server_data(message)

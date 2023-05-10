@@ -57,6 +57,12 @@
                 />
                 <field name="state" />
                 <field name="invoice_id" />
+                <filter
+                    string="Invoice"
+                    name="invoice_id"
+                    context="{'group_by': 'invoice_id'}"
+                />
+                <filter string="State" name="state" context="{'group_by': 'state'}" />
             </search>
         </field>
     </record>
