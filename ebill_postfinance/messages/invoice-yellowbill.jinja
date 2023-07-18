@@ -22,7 +22,7 @@
         </DeliveryInfo>
         <Bill>
             <Header>
-                <DocumentType>BILL</DocumentType>
+                <DocumentType>{{ 'BILL' if invoice.move_type == 'out_invoice' else 'CREDITADVICE' }}</DocumentType>
                 <DocumentID>{{ invoice.name }}</DocumentID>
                 <DocumentDate>{{ format_date(invoice.date_invoice) }}</DocumentDate>
                 <SenderParty>

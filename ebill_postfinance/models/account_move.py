@@ -51,20 +51,21 @@ class AccountMove(models.Model):
             return
         # Generate PDf to be send
         pdf_data = []
+        # When test are run, pdf are not generated, so use an empty pdf
+        pdf = b""
         report_names = ["account.report_invoice"]
-        if contract.payment_type == "qr":
-            report_names.append("l10n_ch.qr_report_main")
-        elif contract.payment_type == "isr":
-            report_names.append("l10n_ch.isr_report_main")
+        if self.move_type == "out_invoice":
+            if contract.payment_type == "qr":
+                report_names.append("l10n_ch.qr_report_main")
         for report_name in report_names:
             r = self.env["ir.actions.report"]._get_report_from_name(report_name)
             pdf_content, _ = r._render([self.id])
             pdf_data.append(pdf_content)
         if not odoo.tools.config["test_enable"]:
-            pdf = merge_pdf(pdf_data)
-        else:
-            # When test are run, pdf are not generated, so use an empty pdf
-            pdf = b""
+            if len(pdf_data) > 1:
+                pdf = merge_pdf(pdf_data)
+            elif len(pdf_data) == 1:
+                pdf = pdf_data[0]
         message = self.env["ebill.postfinance.invoice.message"].create(
             {
                 "service_id": contract.postfinance_service_id.id,
