@@ -78,10 +78,15 @@ class EbillPostfinanceInvoiceMessage(models.Model):
         "Payload Size (MB)", digits=(6, 3), compute="_compute_payload_size"
     )
     response = fields.Text("Response")
-    # shipment_id = fields.Char(size=24, help="Shipment Id on Paynet service")
     payment_type = fields.Selection(
-        selection=[("qr", "QR"), ("isr", "ISR"), ("esp", "ESP"), ("npy", "NPY")],
-        default="qr",
+        selection=[
+            ("iban", "IBAN"),
+            ("credit", "CREDIT"),
+            ("other", "OTHER"),
+            ("dd", "DD"),
+            ("esr", "ESR"),
+        ],
+        default="iban",
         readonly=True,
     )
 
@@ -182,7 +187,7 @@ class EbillPostfinanceInvoiceMessage(models.Model):
 
     def _get_payload_params(self):
         bank_account = ""
-        if self.payment_type == "qr":
+        if self.payment_type == "iban":
             bank_account = sanitize_account_number(
                 self.invoice_id.partner_bank_id.l10n_ch_qr_iban
                 or self.invoice_id.partner_bank_id.acc_number
@@ -247,7 +252,7 @@ class EbillPostfinanceInvoiceMessage(models.Model):
 
     def _get_payload_params_yb(self):
         bank_account = ""
-        if self.payment_type == "qr":
+        if self.payment_type == "iban":
             bank_account = sanitize_account_number(
                 self.invoice_id.partner_bank_id.l10n_ch_qr_iban
                 or self.invoice_id.partner_bank_id.acc_number
@@ -282,6 +287,7 @@ class EbillPostfinanceInvoiceMessage(models.Model):
             "bank_account": bank_account,
             "transaction_id": self.transaction_id,
             "payment_type": self.payment_type,
+            "amount_sign": -1 if self.payment_type == "credit" else 1,
             "document_type": DOCUMENT_TYPE[self.invoice_id.move_type],
             "format_date": self.format_date_yb,
             "ebill_account_number": self.ebill_account_number,

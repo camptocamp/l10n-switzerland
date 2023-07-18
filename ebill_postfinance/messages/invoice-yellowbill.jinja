@@ -22,7 +22,7 @@
         </DeliveryInfo>
         <Bill>
             <Header>
-                <DocumentType>BILL</DocumentType>
+                <DocumentType>{{ 'BILL' if invoice.move_type == 'out_invoice' else 'CREDITADVICE' }}</DocumentType>
                 <DocumentID>{{ invoice.name }}</DocumentID>
                 <DocumentDate>{{ format_date(invoice.date_invoice) }}</DocumentDate>
                 <SenderParty>
@@ -129,9 +129,9 @@
                 <Language>{{ (customer.lang or "en")|truncate(2, True, "") }}</Language>
                 <PaymentInformation>
                     <PaymentDueDate>{{ date_due }}</PaymentDueDate>
-                    {# the payment_type on message should be changed for yb #}
-                    <PaymentType>{{ 'ESR' if payment_type == 'isr' else "IBAN"|upper }}</PaymentType>
+                    <PaymentType>{{ payment_type|upper }}</PaymentType>
                     <fixAmount>Yes</fixAmount>
+                    {% if payment_type == 'iban' %}
                     <IBAN>
                         {%- if bank.bank_id.clearing %}
                         <BIC>{{ bank.bank_id.clearing }}</BIC>
@@ -142,6 +142,7 @@
                         <CreditorReference>{{ invoice.payment_reference }}</CreditorReference>
                         {%- endif %}
                     </IBAN>
+                    {%- endif %}
                 </PaymentInformation>
             </Header>
             <LineItems>
@@ -213,10 +214,10 @@
                 {#     <Days></Days> #}
                 {#     <Rate></Rate> #}
                 {# </Discount> #}
-                <TotalAmountExclusiveTax>{{ invoice.amount_untaxed }}</TotalAmountExclusiveTax>
-                <TotalAmountInclusiveTax>{{ invoice.amount_total }}</TotalAmountInclusiveTax>
+                <TotalAmountExclusiveTax>{{ invoice.amount_untaxed * amount_sign }}</TotalAmountExclusiveTax>
+                <TotalAmountInclusiveTax>{{ invoice.amount_total * amount_sign }}</TotalAmountInclusiveTax>
                 {# <TotalAmountPaid></TotalAmountPaid> #}
-                <TotalAmountDue>{{ invoice.amount_total}}</TotalAmountDue>
+                <TotalAmountDue>{{ invoice.amount_total * amount_sign }}</TotalAmountDue>
             </Summary>
         </Bill>
         <Appendix>
