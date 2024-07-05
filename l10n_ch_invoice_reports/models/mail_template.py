@@ -25,9 +25,15 @@ class MailTemplate(models.Model):
         # report name is not mandatory and odoo implementation does not rely on it
         # but in this case we assume that this is report linked to the template
         if (
-            self.model_id.model == "account.move"
+            self.env.user.company_id.partner_id.country_id.code == "CH"
+            and self.model_id.model == "account.move"
             and self.report_template.report_name
-            == "l10n_ch_invoice_reports.account_move_payment_report"
+            in (
+                # Called from action Invoice with payment slip(s)
+                "l10n_ch_invoice_reports.account_move_payment_report",
+                # Called from Send & Print button
+                "account.report_invoice_with_payments",
+            )
         ):
             return True
 
