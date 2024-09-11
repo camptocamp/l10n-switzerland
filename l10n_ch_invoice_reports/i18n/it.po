@@ -18,7 +18,7 @@ msgstr ""
 #. module: l10n_ch_invoice_reports
 #: model:ir.actions.report,print_report_name:l10n_ch_invoice_reports.account_move_payment_report
 msgid "('invoice-payment-slip_'+object.name)"
-msgstr ""
+msgstr "('ricevuta-di-pagamento-fattura_'+object.name)"
 
 #. module: l10n_ch_invoice_reports
 #: model_terms:ir.ui.view,arch_db:l10n_ch_invoice_reports.res_config_settings_view_form
@@ -26,21 +26,22 @@ msgid ""
 "<span class=\"fa fa-lg fa-building-o\" title=\"Values set here are company-"
 "specific.\"/>"
 msgstr ""
+"<span class=\"fa fa-lg fa-building-o\" title=\"I valori impostati qui sono specifici dell'azienda.\"/>"
 
 #. module: l10n_ch_invoice_reports
 #: model_terms:ir.ui.view,arch_db:l10n_ch_invoice_reports.res_config_settings_view_form
 msgid "<span class=\"o_form_label\">Invoice report options</span>"
-msgstr ""
+msgstr "<span class=\"o_form_label\">Opzioni di report della fattura</span>"
 
 #. module: l10n_ch_invoice_reports
 #: model:ir.model,name:l10n_ch_invoice_reports.model_res_company
 msgid "Companies"
-msgstr ""
+msgstr "Aziende"
 
 #. module: l10n_ch_invoice_reports
 #: model:ir.model,name:l10n_ch_invoice_reports.model_res_config_settings
 msgid "Config Settings"
-msgstr ""
+msgstr "Impostazioni di configurazione"
 
 #. module: l10n_ch_invoice_reports
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_ir_actions_report__display_name
@@ -48,12 +49,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_res_company__display_name
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_res_config_settings__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Nome visualizzato"
 
 #. module: l10n_ch_invoice_reports
 #: model:ir.model,name:l10n_ch_invoice_reports.model_mail_template
 msgid "Email Templates"
-msgstr ""
+msgstr "Modelli di e-mail"
 
 #. module: l10n_ch_invoice_reports
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_ir_actions_report__id
@@ -61,18 +62,18 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_res_company__id
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_res_config_settings__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: l10n_ch_invoice_reports
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_res_company__invoice_report_id
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_res_config_settings__invoice_report_id
 msgid "Invoice Report"
-msgstr ""
+msgstr "Report della fattura"
 
 #. module: l10n_ch_invoice_reports
 #: model:ir.actions.report,name:l10n_ch_invoice_reports.account_move_payment_report
 msgid "Invoice with payment slip(s)"
-msgstr ""
+msgstr "Fattura con ricevuta/e di pagamento"
 
 #. module: l10n_ch_invoice_reports
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_ir_actions_report____last_update
@@ -80,36 +81,36 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_res_company____last_update
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_res_config_settings____last_update
 msgid "Last Modified on"
-msgstr ""
+msgstr "Ultima modifica il"
 
 #. module: l10n_ch_invoice_reports
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_res_company__print_qr_invoice
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_res_config_settings__print_qr_invoice
 msgid "Print invoice with QR bill"
-msgstr ""
+msgstr "Stampa la fattura con bolletta QR"
 
 #. module: l10n_ch_invoice_reports
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_res_company__qr_report_id
 #: model:ir.model.fields,field_description:l10n_ch_invoice_reports.field_res_config_settings__qr_report_id
 msgid "QR Report"
-msgstr ""
+msgstr "Report QR"
 
 #. module: l10n_ch_invoice_reports
 #: model_terms:ir.ui.view,arch_db:l10n_ch_invoice_reports.res_config_settings_view_form
 msgid "QR invoice printed"
-msgstr ""
+msgstr "Fattura QR stampata"
 
 #. module: l10n_ch_invoice_reports
 #: model:ir.model,name:l10n_ch_invoice_reports.model_ir_actions_report
 msgid "Report Action"
-msgstr ""
+msgstr "Azione di report"
 
 #. module: l10n_ch_invoice_reports
 #: model_terms:ir.ui.view,arch_db:l10n_ch_invoice_reports.res_config_settings_view_form
 msgid "Report invoice printed"
-msgstr ""
+msgstr "Report della fattura stampata"
 
 #. module: l10n_ch_invoice_reports
 #: model_terms:ir.ui.view,arch_db:l10n_ch_invoice_reports.res_config_settings_view_form
 msgid "This option will be applied on invoice report"
-msgstr ""
+msgstr "Questa opzione sarà applicata sul report della fattura"
