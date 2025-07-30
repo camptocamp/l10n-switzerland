@@ -1,0 +1,1 @@
+odoo-addon-ebill_postfinance @ git+https://github.com/OCA/l10n-switzerland@refs/pull/759/head#subdirectory=ebill_postfinance
