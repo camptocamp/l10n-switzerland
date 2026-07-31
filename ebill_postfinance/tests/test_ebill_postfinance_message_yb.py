@@ -2,13 +2,12 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
 
 import logging
-import os
 from string import Template
 
 from freezegun import freeze_time
 from lxml import etree as ET
 
-from odoo.modules.module import get_module_root
+from odoo.modules.module import get_module_path
 from odoo.tools import file_open
 
 from .common import CommonCase, clean_xml
@@ -22,8 +21,7 @@ class TestEbillPostfinanceMessageYB(CommonCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.schema_file = (
-            get_module_root(os.path.dirname(__file__))
-            + "/messages/ybInvoice_V2.0.4.xsd"
+            get_module_path("ebill_postfinance") + "/messages/ybInvoice_V2.0.4.xsd"
         )
         # If ebill_postfinance_stock is installed it will break the test
         try:
