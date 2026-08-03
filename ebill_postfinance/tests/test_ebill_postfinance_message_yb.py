@@ -8,6 +8,7 @@ from freezegun import freeze_time
 from lxml import etree as ET
 
 from odoo.modules.module import get_module_path
+from odoo.tests import tagged
 from odoo.tools import file_open
 
 from .common import CommonCase, clean_xml
@@ -15,6 +16,7 @@ from .common import CommonCase, clean_xml
 _logger = logging.getLogger(__name__)
 
 
+@tagged("post_install", "-at_install")
 @freeze_time("2019-06-21 09:06:00")
 class TestEbillPostfinanceMessageYB(CommonCase):
     @classmethod
